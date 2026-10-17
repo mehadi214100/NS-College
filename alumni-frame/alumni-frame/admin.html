@@ -1,0 +1,104 @@
+<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin · ফ্রেম এডিটর</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;800&family=Tiro+Bangla:ital@0;1&family=Baloo+Da+2:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&family=Montserrat:wght@400;600;700;800&display=swap">
+<style>
+:root{--a:#0B5A34;--ln:#D3DED4;--bg:#F1F5EF;--mu:#566B5E;font-family:'Hind Siliguri',system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#10281D;font-size:15px}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
+header h1{font-size:18px;margin:0 auto 0 0}
+button,select,input,textarea{font:inherit}
+button{padding:7px 12px;border:1.5px solid var(--ln);border-radius:9px;background:#fff;cursor:pointer;font-weight:600}
+button.p{background:var(--a);color:#fff;border-color:var(--a)}button.d{color:#b00020}
+main{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:16px;padding:14px;max-width:1300px;margin:auto}
+.cv{position:sticky;top:64px;align-self:start}.wrap{position:relative;background:#fff;padding:6px;border-radius:14px;border:1px solid var(--ln)}
+canvas{width:100%;display:block;border-radius:8px;touch-action:none;cursor:move}
+#sel{position:absolute;border:2px dashed #ff3d71;pointer-events:none;display:none}
+.panel{background:#fff;border:1px solid var(--ln);border-radius:14px;padding:12px;min-width:0}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button.on{background:var(--a);color:#fff}
+.row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:8px;cursor:pointer}.row.on{background:#DFF0E4}.row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row button{padding:1px 8px}.row.off span{opacity:.4}
+.f{display:grid;grid-template-columns:130px 1fr;gap:6px 10px;align-items:center;padding:3px 0}.f label{color:var(--mu);font-size:13.5px}
+.f input[type=text],.f select,.f textarea{width:100%;padding:6px 8px;border:1.5px solid var(--ln);border-radius:8px}
+.f .n{display:flex;gap:6px}.f .n input[type=range]{flex:1;min-width:0}.f .n input[type=number]{width:74px;padding:4px;border:1.5px solid var(--ln);border-radius:8px}
+.f input[type=color]{width:48px;height:32px;padding:0;border:1.5px solid var(--ln);border-radius:8px}
+.bar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.hint{color:var(--mu);font-size:13px;margin:6px 0}
+details{margin:8px 14px;max-width:1270px;margin-inline:auto}summary{cursor:pointer;font-weight:700}
+@media(max-width:900px){main{grid-template-columns:1fr}.cv{position:static}.f{grid-template-columns:100px 1fr}}
+#gate{position:fixed;inset:0;background:#F1F5EF;z-index:20;display:grid;place-items:center}#gate[hidden],[hidden]{display:none!important}
+</style></head><body>
+<div id="gate"><div class="panel" style="width:min(92vw,340px)"><h3 style="margin:0 0 8px">🔒 অ্যাডমিন লগইন</h3><input id="pw" type="password" placeholder="পাসওয়ার্ড" style="width:100%;padding:10px;border:1.5px solid var(--ln);border-radius:9px"><p class="hint" id="pwm"></p><button class="p" id="pwb" style="width:100%">প্রবেশ করুন</button><p class="hint"><a href="index.html">← ইউজার পেজে ফিরুন</a></p></div></div>
+<header><h1>🎨 ফ্রেম এডিটর</h1>
+<button id="bTest">টেস্ট ছবি</button><button id="bPrev">ইউজার পেজ প্রিভিউ</button><label class="hint" style="margin:0"><input type="checkbox" id="adv"> অ্যাডভান্সড</label><button id="bRes" class="d">↺ মূল ডিজাইনে ফিরুন</button><button id="bSave" class="p">✔ সেভ ও প্রকাশ</button><span id="adx" hidden><button id="bImp">ইমপোর্ট</button><button id="bDl">config.js ডাউনলোড</button></span>
+<input type="file" id="fTest" accept="image/*" hidden><input type="file" id="fImp" accept=".js,.json" hidden><input type="file" id="fImg" accept="image/*" hidden></header>
+<p class="hint" id="msg" style="margin:8px 14px">বদলান → "ইউজার পেজ প্রিভিউ"-তে দেখুন → ঠিক থাকলে "সেভ ও প্রকাশ" চাপুন। কিছু খারাপ হলে "মূল ডিজাইনে ফিরুন"।</p>
+<main><div class="cv"><div class="wrap"><canvas id="c" width="1200" height="1200"></canvas><div id="sel"></div></div><p class="hint" id="st">ক্যানভাসে ক্লিক করে এলিমেন্ট বেছে টেনে সরান; অ্যারো কী দিয়ে ১px (Shift = ১০px) সরানো যায়।</p></div>
+<div class="panel"><div class="tabs"><button data-t="l" class="on">এলিমেন্ট</button><button data-t="p">বৈশিষ্ট্য</button><button data-t="g">পেজ সেটিং</button></div><div id="tab"></div></div></main>
+<script src="config.js"></script><script src="frame.js"></script>
+<script>
+(function(){'use strict';var AF=window.AF,$=function(i){return document.getElementById(i)},cv=$('c'),ctx=cv.getContext('2d');
+var pub=window.FRAME_CONFIG,SET=window.FRAME_SETTINGS||{},cfg=AF.normalize(pub),sel=null,tab='l',bounds=[],test={img:null,zoom:1,ox:0,oy:0},adv=false,dirty=false;
+var LB={name:'নাম',text:'লেখা',x:'X',y:'Y',cx:'X (কেন্দ্র)',cy:'Y (কেন্দ্র)',w:'প্রস্থ',h:'উচ্চতা',r:'কোণ গোলাকার',size:'সাইজ',weight:'বোল্ড',family:'ফন্ট',italic:'ইটালিক',color:'রঙ',opacity:'স্বচ্ছতা',align:'অ্যালাইন',maxWidth:'সর্বোচ্চ প্রস্থ (০=সীমাহীন)',shadow:'ছায়া',heart:'হার্ট আইকন',heartGap:'হার্টের দূরত্ব',heartSize:'হার্টের সাইজ',heartColor:'হার্টের রঙ',flank:'দুই পাশে দাগ',flankGap:'দাগের দূরত্ব',flankLen:'দাগের দৈর্ঘ্য',flankColor:'দাগের রঙ',padX:'দুই পাশের ফাঁকা',radius:'কোণ গোলাকার',bg1:'ব্যাকগ্রাউন্ড ১',bg2:'ব্যাকগ্রাউন্ড ২',borderW:'বর্ডার মোটা',border:'বর্ডার রঙ',inner:'ভেতরের পাতলা বর্ডার',innerColor:'ভেতরের বর্ডার রঙ',src:'ছবি',circle:'গোল করে কাটুন',scale:'স্কেল',flip:'উল্টে দিন',c1:'রঙ ১',c2:'রঙ ২',shape:'আকৃতি',back:'পেছনের রঙ',ring:'রিং মোটা',ring1:'রিং রঙ ১',ring2:'রিং রঙ ২',thin:'পাতলা রিং',thinOff:'পাতলা রিং দূরত্ব',thinColor:'পাতলা রিং রঙ',dots:'ডটেড রিং/ডট',dotsOff:'ডটেড রিং দূরত্ব',dotsColor:'ডটেড রিং রঙ',dotsAlpha:'ডট স্বচ্ছতা',ph1:'ডামি ছবির রঙ ১',ph2:'ডামি ছবির রঙ ২',label:'লেবেল',value:'মান',labelSize:'লেবেল সাইজ',labelWeight:'লেবেল বোল্ড',labelColor:'লেবেল রঙ',valueSize:'মান সাইজ',valueWeight:'মান বোল্ড',valueColor:'মানের রঙ',gap:'লেবেল-মান ফাঁকা',pill:'মান ব্যাজে দেখান',pillBg:'ব্যাজ রঙ',pillText:'ব্যাজ লেখার রঙ',pillPad:'ব্যাজের ফাঁকা',icon:'আইকন',iconSize:'আইকন সাইজ',iconTop:'আইকন উপরের রঙ',iconPeg:'আইকন পিনের রঙ',iconDot:'আইকন ডটের রঙ',len:'দৈর্ঘ্য',thick:'মোটা',fade:'দুই মাথা ফিকে',rotate:'ঘোরান (ডিগ্রি)',fillOn:'ভেতরে রঙ',fill:'ভেতরের রঙ',fillOp:'ভেতরের স্বচ্ছতা',strokeW:'বর্ডার মোটা',stroke:'বর্ডার রঙ',strokeOp:'বর্ডার স্বচ্ছতা',glow:'গ্লো',glowColor:'গ্লো রঙ',glowX:'গ্লো X',glowY:'গ্লো Y',glowR:'গ্লো সাইজ',glowAlpha:'গ্লো স্বচ্ছতা',title:'পেজের শিরোনাম',eyebrow:'শিরোনামের উপরের লেখা',accent:'বাটনের রঙ',bg:'পেজের ব্যাকগ্রাউন্ড',prefix:'ডাউনলোড ফাইলের নাম',out:'ছবির সাইজ (px)',upload:'আপলোডের নিচের লেখা'};
+var SEL={family:Object.keys(AF.FONTS),align:['left','center','right'],weight:[400,600,700,800],shape:['ellipse','rounded','square'],icon:['none','calendar']};
+var GRP={heart:'heart',flank:'flank',thin:'thin',dots:'dots',inner:'inner',pill:'pill',icon:'icon',fill:'fillOn'};
+var SKIP={type:1,id:1,visible:1,name:1};var SIMPLE='text,label,value,color,size,labelColor,valueColor,bg1,bg2,pillBg,pillText,c1,c2,ring1,ring2,back,x,y,cx,cy,src,glowColor,stroke,accent,bg,title,eyebrow,upload,prefix'.split(',');
+function find(id){return cfg.elements.filter(function(e){return e.id==id})[0]}
+function save(){dirty=true}
+window.onbeforeunload=function(){return dirty?'সেভ করা হয়নি':undefined};
+function say(m){$('msg').innerHTML=m}
+function draw(){bounds=AF.render(ctx,cfg,test);box()}
+function box(){var s=$('sel'),b=bounds.filter(function(x){return x.id==sel}).pop();if(!b){s.style.display='none';return}s.style.display='block';var cw=cv.clientWidth,sc=cw/1200;s.style.left=(6+b.x*sc)+'px';s.style.top=(6+b.y*sc)+'px';s.style.width=b.w*sc+'px';s.style.height=b.h*sc+'px'}
+function el(t,a,h){var e=document.createElement(t);for(var k in a||{})e[k]=a[k];if(h!=null)e.innerHTML=h;return e}
+function field(o,k,onc){var v=o[k],f=el('div',{className:'f'}),l=el('label',{},LB[k]||k),c;f.appendChild(l);
+ function set(x){o[k]=x;draw();save()}
+ if(typeof v=='boolean'){c=el('input',{type:'checkbox',checked:v});c.onchange=function(){set(c.checked);build()}}
+ else if(SEL[k]){c=el('select');SEL[k].forEach(function(x){c.appendChild(el('option',{value:x,selected:x==v},x))});c.onchange=function(){set(isNaN(c.value)?c.value:+c.value);build()}}
+ else if(typeof v=='number'){var mx=/opacity|Op$|Alpha|^scale$/.test(k)?1:/size|Size|^w$|^h$|len|^out$/i.test(k)?2400:/thick|Off|^r|radius|ring|Gap|Pad|borderW|strokeW|Len/.test(k)?200:/rotate/.test(k)?360:1400,mn=/^x$|^y$|^cx$/.test(k)?-200:0,stp=mx==1?.05:1;
+  c=el('div',{className:'n'});var r=el('input',{type:'range',min:mn,max:Math.max(mx,v),step:stp,value:v}),n=el('input',{type:'number',step:stp,value:v});
+  r.oninput=function(){n.value=r.value;set(+r.value)};n.oninput=function(){r.value=n.value;set(+n.value)};c.append(r,n)}
+ else if(/^#[0-9a-f]{6}$/i.test(v)){c=el('input',{type:'color',value:v});c.oninput=function(){set(c.value)}}
+ else if(k=='src'){c=el('div');var b=el('button',{},'ছবি বদলান'),r=el('button',{className:'d'},'ডিফল্ট লোগো');b.onclick=function(){$('fImg').onchange=function(){rd($('fImg').files[0],o);$('fImg').value=''};$('fImg').click()};r.onclick=function(){o.src='';draw();save()};c.append(b,r)}
+ else{c=k=='text'?el('textarea',{rows:2,value:v}):el('input',{type:'text',value:v});c.oninput=function(){set(c.value)}}
+ f.appendChild(c);return f}
+function rd(file,o){if(!file)return;var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var s=Math.min(1,600/Math.max(im.width,im.height)),q=document.createElement('canvas');q.width=im.width*s;q.height=im.height*s;q.getContext('2d').drawImage(im,0,0,q.width,q.height);o.src=q.toDataURL('image/png');AF.onload=draw;draw();save();build()};im.src=u}
+function build(){var t=$('tab');t.innerHTML='';document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t==tab)});
+ if(tab=='g'){Object.keys(cfg.page).forEach(function(k){t.appendChild(field(cfg.page,k))});var pb=el('button',{},'পাসওয়ার্ড বদলান');pb.onclick=function(){var n=prompt('নতুন পাসওয়ার্ড (কমপক্ষে ৪ অক্ষর):');if(!n||n.length<4)return;AF.sha(n).then(function(h){return SET.db?AF.dbPut(SET.db,'auth',h):Promise.reject()}).then(function(){alert('পাসওয়ার্ড বদলেছে')},function(){alert('ডাটাবেস সেটআপ ছাড়া পাসওয়ার্ড বদলানো যায় না')})};t.appendChild(pb);return}
+ if(tab=='l'){cfg.elements.slice().reverse().forEach(function(e){var i=cfg.elements.indexOf(e),r=el('div',{className:'row'+(e.id==sel?' on':'')+(e.visible?'':' off')});
+  var ey=el('button',{title:'দেখান/লুকান'},e.visible?'👁':'—'),nm=el('span',{},e.name||e.type),u=el('button',{},'↑'),dn=el('button',{},'↓');if(!adv){u.hidden=dn.hidden=true}
+  ey.onclick=function(x){x.stopPropagation();e.visible=!e.visible;draw();save();build()};u.onclick=function(x){x.stopPropagation();if(i<cfg.elements.length-1){cfg.elements.splice(i+1,0,cfg.elements.splice(i,1)[0]);draw();save();build()}};dn.onclick=function(x){x.stopPropagation();if(i>0){cfg.elements.splice(i-1,0,cfg.elements.splice(i,1)[0]);draw();save();build()}};
+  r.onclick=function(){sel=e.id;tab='p';build();draw()};r.append(ey,nm,u,dn);t.appendChild(r)});
+  var bar=el('div',{className:'bar'}),s=el('select');if(!adv)return;Object.keys(AF.BASE).forEach(function(k){if(k!='bg'&&k!='photo')s.appendChild(el('option',{value:k},{text:'লেখা',pill:'ব্যাজ',rect:'বক্স/বর্ডার',line:'দাগ',image:'ছবি/লোগো',laurel:'লরেল',info:'লেবেল+মান'}[k]))});
+  var add=el('button',{className:'p'},'+ যোগ করুন');add.onclick=function(){var n=AF.normalize({elements:[{type:s.value,name:'নতুন '+s.options[s.selectedIndex].text}]}).elements[0];cfg.elements.push(n);sel=n.id;tab='p';build();draw();save()};bar.append(s,add);t.appendChild(bar);return}
+ var e=find(sel);if(!e){t.appendChild(el('p',{className:'hint'},'ক্যানভাসে বা তালিকায় একটি এলিমেন্ট বেছে নিন।'));return}
+ if(adv)t.appendChild(field(e,'name'));var bar=el('div',{className:'bar'}),c=el('button',{},'মাঝখানে আনুন (অনুভূমিক)'),dp=el('button',{},'কপি'),dl=el('button',{className:'d'},'মুছুন');
+ c.onclick=function(){var b=bounds.filter(function(x){return x.id==e.id}).pop();if(!b)return;var dx=600-(b.x+b.w/2);if('cx' in e)e.cx+=dx;else e.x+=dx;draw();save();build()};
+ dp.onclick=function(){var n=JSON.parse(JSON.stringify(e));n.id='e'+Date.now();n.name+=' (কপি)';if('cx' in n)n.cy+=30;else n.y+=30;cfg.elements.push(n);sel=n.id;build();draw();save()};
+ dl.onclick=function(){if(confirm('মুছে ফেলবেন?')){cfg.elements=cfg.elements.filter(function(x){return x.id!=e.id});sel=null;tab='l';build();draw();save()}};if(adv)bar.append(c,dp,dl);else bar.append(c);t.appendChild(bar);
+ Object.keys(AF.BASE[e.type]).forEach(function(k){if(SKIP[k]||(!adv&&SIMPLE.indexOf(k)<0))return;if(GRP[k]===undefined){var g=Object.keys(GRP).filter(function(p){return k!=p&&k.indexOf(p)==0&&k.length>p.length&&(AF.BASE[e.type][p]!==undefined||p=='fill')})[0];if(g){var gv=e[GRP[g]];if(!gv||gv=='none')return}}
+  if(k=='radius'&&e.type=='photo'&&e.shape!='rounded')return;t.appendChild(field(e,k))})}
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){tab=b.dataset.t;build()}});
+/* canvas drag */
+var drag=null;function pt(ev){var r=cv.getBoundingClientRect();return[(ev.clientX-r.left)*1200/r.width,(ev.clientY-r.top)*1200/r.height]}
+cv.onpointerdown=function(ev){var p=pt(ev),hit=null;for(var i=bounds.length-1;i>=0;i--){var b=bounds[i];if(b.type=='bg')continue;var ok=p[0]>=b.x-4&&p[0]<=b.x+b.w+4&&p[1]>=b.y-4&&p[1]<=b.y+b.h+4;
+ if(ok&&b.edge){var m=20;ok=p[0]<b.x+m||p[0]>b.x+b.w-m||p[1]<b.y+m||p[1]>b.y+b.h-m}if(ok){hit=b;break}}
+ if(!hit){sel=null;box();return}sel=hit.id;tab='p';cv.setPointerCapture(ev.pointerId);drag={p:p,e:find(sel)};drag.k=('cx' in drag.e)?['cx','cy']:['x','y'];drag.o=[drag.e[drag.k[0]],drag.e[drag.k[1]]];box()};
+cv.onpointermove=function(ev){if(!drag)return;var p=pt(ev);drag.e[drag.k[0]]=Math.round(drag.o[0]+p[0]-drag.p[0]);drag.e[drag.k[1]]=Math.round(drag.o[1]+p[1]-drag.p[1]);draw()};
+cv.onpointerup=function(){if(drag){drag=null;save();build()}};
+document.onkeydown=function(ev){var e=find(sel);if(!e||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;var s=ev.shiftKey?10:1,k=('cx' in e)?['cx','cy']:['x','y'],d={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[ev.key];if(d){ev.preventDefault();e[k[0]]+=d[0];e[k[1]]+=d[1];draw();save();build()}};
+/* toolbar */
+$('bTest').onclick=function(){$('fTest').click()};$('fTest').onchange=function(){var f=this.files[0];if(!f)return;var im=new Image();im.onload=function(){test.img=im;draw()};im.src=URL.createObjectURL(f)};
+$('bPrev').onclick=function(){try{localStorage.setItem('af_draft',JSON.stringify(cfg))}catch(e){}window.open('index.html?preview=1','_blank')};
+$('bDl').onclick=function(){var t='/* ফ্রেম কনফিগ */\nwindow.FRAME_SETTINGS = '+JSON.stringify(SET)+';\nwindow.FRAME_CONFIG = '+JSON.stringify(cfg)+';\n',a=el('a',{href:URL.createObjectURL(new Blob([t],{type:'text/javascript'})),download:'config.js'});document.body.appendChild(a);a.click();a.remove()};
+function pub2(){if(!SET.db){say('⚠ ডাটাবেস সেটআপ হয়নি (config.js-এ db লিংক নেই), তাই অনলাইনে সেভ হবে না। অ্যাডভান্সড → config.js ডাউনলোড ব্যবহার করুন।');return Promise.reject()}
+ return AF.dbPut(SET.db,'frame',cfg).then(function(){dirty=false;say('✅ সেভ হয়েছে! সবাই এখন নতুন ফ্রেম দেখবে। <a href="index.html" target="_blank">ইউজার পেজে দেখুন</a>')},function(){say('❌ সেভ হয়নি। ইন্টারনেট বা ডাটাবেস সেটিং দেখুন।');return Promise.reject()})}
+$('bSave').onclick=function(){say('সেভ হচ্ছে…');pub2().catch(function(){})};
+$('adv').onchange=function(){adv=this.checked;$('adx').hidden=!adv;build()};
+$('bImp').onclick=function(){$('fImp').click()};$('fImp').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var t=r.result;cfg=AF.normalize(JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1)));sel=null;build();draw();save()}catch(e){alert('ফাইলটি পড়া যায়নি')}};r.readAsText(f)};
+$('bRes').onclick=function(){if(confirm('সব পরিবর্তন বাদ দিয়ে প্রথম (মূল) ডিজাইনে ফিরবেন?')){cfg=AF.normalize(AF.DEFAULT);sel=null;dirty=true;build();draw();if(SET.db&&confirm('মূল ডিজাইন এখনই সবার জন্য প্রকাশ করবেন?'))pub2().catch(function(){});else say('মূল ডিজাইন লোড হয়েছে। প্রকাশ করতে "সেভ ও প্রকাশ" চাপুন।')}};
+window.onresize=box;AF.onload=draw;
+function init(){$('gate').hidden=true;var p=SET.db?AF.dbGet(SET.db,'frame'):Promise.resolve(null);p.then(function(r){if(r&&r.elements)cfg=AF.normalize(r);build();draw();AF.fonts(cfg).then(draw)})}
+function login(){var v=$('pw').value;SET.db&&AF.dbGet(SET.db,'auth').then(function(a){return a}).then(chk)||chk();
+ function chk(a){AF.sha(v).then(function(h){if(h===(typeof a=='string'?a:SET.pw)){try{sessionStorage.setItem('af_ok','1')}catch(e){}init()}else $('pwm').textContent='পাসওয়ার্ড ভুল'})}}
+$('pwb').onclick=login;$('pw').onkeydown=function(e){if(e.key=='Enter')login()};
+try{if(sessionStorage.getItem('af_ok')){init()}}catch(e){}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
+})();
+</script></body></html>
